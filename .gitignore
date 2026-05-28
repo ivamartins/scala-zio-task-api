@@ -1,0 +1,17 @@
+# Scala
+target/
+.bsp/
+.idea/
+*.class
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+mongo_data/
+
+# Environment
+.env
+*.env
