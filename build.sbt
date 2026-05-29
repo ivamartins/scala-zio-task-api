@@ -5,11 +5,11 @@ version := "0.1.0-SNAPSHOT"
 scalaVersion := "3.5.2"
 
 val zioVersion        = "2.1.15"
-val zioHttpVersion    = "3.0.1"
+val zioHttpVersion    = "3.0.0-RC4"   // Downgraded for API compatibility with current code
 val zioJsonVersion    = "0.7.3"
 val zioLoggingVersion = "2.3.1"
 val zioConfigVersion  = "4.0.2"
-val mongo4catsVersion = "0.7.12"
+val mongoVersion      = "5.1.0"     // Official MongoDB Scala Driver (use _2.13 because it's not published for Scala 3)
 val zioTestVersion    = zioVersion
 
 libraryDependencies ++= Seq(
@@ -27,9 +27,8 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-config-magnolia" % zioConfigVersion,
   "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
 
-  // MongoDB (mongo4cats)
-  "com.github.mongocamp" %% "mongo4cats-zio"      % mongo4catsVersion,
-  "com.github.mongocamp" %% "mongo4cats-circe"    % mongo4catsVersion,
+  // MongoDB - Official MongoDB Scala Driver (forced 2.13 because no Scala 3 artifacts exist)
+  "org.mongodb.scala" % "mongo-scala-driver_2.13" % mongoVersion,
 
   // Test
   "dev.zio" %% "zio-test"     % zioTestVersion % Test,

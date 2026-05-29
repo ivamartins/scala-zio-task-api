@@ -2,25 +2,71 @@
 
 Complete CRUD REST API built with **Scala 3 + ZIO 2 + ZIO HTTP** featuring two persistence options:
 
-- **In-Memory** (default) → runs immediately
-- **MongoDB** (NoSQL) → real persistence using mongo4cats
+- **In-Memory** (default) → runs immediately, no Docker needed
+- **MongoDB** (NoSQL) → real persistence using official MongoDB Scala Driver (requires Docker)
+
+Persistence is controlled by **a single flag** in `Main.scala`.
 
 This project was created for study and portfolio purposes, with clean architecture, typed errors, and well-organized code.
 
 ---
 
-## ✅ How to Run the Project
+## Prerequisites
 
-### 1. Easy Mode - In-Memory (No Docker)
+- Java 11 or higher (you already have it installed)
+- sbt (Scala build tool)
+
+### Installing sbt with Coursier (recommended)
 
 ```bash
-cd zio-task-api
+curl -fL https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz | gzip -d > cs
+chmod +x cs
+./cs install sbt
+```
+
+Restart your terminal and verify the installation:
+
+```bash
+sbt --version
+```
+
+---
+
+## ✅ How to Run the Project
+
+### Choosing Persistence (Important)
+
+Persistence is controlled by **a single flag** in `Main.scala`:
+
+```scala
+// ============================================
+// ESCOLHA A PERSISTÊNCIA AQUI (só mude esta linha)
+// ============================================
+private val useMongo = false   // true = MongoDB | false = In-Memory
+```
+
+- `false` (padrão) → **In-Memory** (rápido, não precisa de Docker)
+- `true` → **MongoDB** (persistência real, precisa do Docker)
+
+---
+
+### 1. Running with In-Memory (Recommended for first tests)
+
+Deixe a flag como `false`:
+
+```scala
+private val useMongo = false
+```
+
+Então rode:
+
+```bash
 sbt run
 ```
 
-The API will start at: **http://localhost:8080**
+A API sobe em: **http://localhost:8080**
 
-Quick test:
+Teste rápido:
 
 ```bash
 curl http://localhost:8080/health
@@ -30,63 +76,43 @@ curl http://localhost:8080/health
 
 ### 2. Running with MongoDB (Real Persistence)
 
-#### Steps:
+#### Passos:
 
-1. **Start MongoDB** (with Mongo Express):
+1. **Suba o MongoDB** (com Mongo Express):
 
 ```bash
 docker compose up -d
 ```
 
-2. **Switch persistence in the code**
-
-Open the file:
-```
-src/main/scala/Main.scala
-```
-
-Locate this section and change it as shown below:
+2. **Mude a flag** no `Main.scala`:
 
 ```scala
-// ============================================
-// CHOOSE PERSISTENCE HERE
-// ============================================
-
-// 1. In-Memory (default) - works without Docker
-private val repositoryLayer: ZLayer[Any, Throwable, TaskRepository] =
-  InMemoryTaskRepository.layer
-
-// 2. MongoDB (enable this option)
-// private val repositoryLayer: ZLayer[Any, Throwable, TaskRepository] =
-//   MongoConfig.layer >>> MongoTaskRepository.layer
+private val useMongo = true
 ```
 
-- Comment out the In-Memory line
-- Uncomment the two MongoDB lines
-
-3. Run the application:
+3. Rode a aplicação:
 
 ```bash
 sbt run
 ```
 
-4. Access Mongo Express (web interface for the database):
+4. Acesse o Mongo Express (interface web do banco):
 
 - **URL**: http://localhost:8081
-- Username: `admin`
-- Password: `admin123`
+- Usuário: `admin`
+- Senha: `admin123`
 
 ---
 
-## How to Switch Back to In-Memory
+## Como voltar para In-Memory
 
-Keep only this line active in `Main.scala`:
+Basta mudar a flag de volta para `false`:
 
 ```scala
-private val repositoryLayer = InMemoryTaskRepository.layer
+private val useMongo = false
 ```
 
-Then run `sbt run` again.
+Depois rode `sbt run` novamente.
 
 ---
 

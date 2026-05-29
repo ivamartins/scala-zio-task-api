@@ -1,8 +1,5 @@
 package config
 
-import zio.config._
-import zio.config.magnolia._
-import zio.config.typesafe._
 import zio.{Layer, ZLayer}
 
 final case class MongoConfig(
@@ -12,8 +9,14 @@ final case class MongoConfig(
 )
 
 object MongoConfig {
-  val descriptor: ConfigDescriptor[MongoConfig] = descriptor[MongoConfig]
 
-  val layer: Layer[Throwable, MongoConfig] =
-    TypesafeConfig.fromResourcePath(descriptor).orDie
+  // For Docker Compose setup (admin/admin123)
+  val default: MongoConfig = MongoConfig(
+    uri = "mongodb://admin:admin123@localhost:27017",
+    database = "taskdb",
+    collection = "tasks"
+  )
+
+  val layer: Layer[Nothing, MongoConfig] =
+    ZLayer.succeed(default)
 }

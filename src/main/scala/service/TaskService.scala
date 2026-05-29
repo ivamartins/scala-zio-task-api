@@ -9,7 +9,7 @@ final case class TaskService(repo: TaskRepository) {
   def getAll: ZTask[List[Task]] = repo.findAll
 
   def getById(id: TaskId): ZIO[Any, TaskError, Task] =
-    repo.findById(id).flatMap {
+    repo.findById(id).orDie.flatMap {
       case Some(task) => ZIO.succeed(task)
       case None       => ZIO.fail(TaskError.TaskNotFound(id))
     }
@@ -19,7 +19,7 @@ final case class TaskService(repo: TaskRepository) {
       ZIO.fail(TaskError.ValidationError("title", "cannot be empty"))
     } else {
       val task = Task.create(title.trim, description.map(_.trim).filter(_.nonEmpty))
-      repo.create(task)
+      repo.create(task).orDie
     }
   }
 
@@ -39,13 +39,13 @@ final case class TaskService(repo: TaskRepository) {
           description = description.map(_.trim).filter(_.nonEmpty),
           completed = completed
         )
-        result <- repo.update(updated)
+        result <- repo.update(updated).orDie
       } yield result
     }
   }
 
   def delete(id: TaskId): ZIO[Any, TaskError, Unit] =
-    repo.delete(id).flatMap {
+    repo.delete(id).orDie.flatMap {
       case true  => ZIO.unit
       case false => ZIO.fail(TaskError.TaskNotFound(id))
     }

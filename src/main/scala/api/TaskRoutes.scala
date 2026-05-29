@@ -19,18 +19,29 @@ object UpdateTaskRequest {
 
 object TaskRoutes {
 
-  private def errorResponse(error: TaskError): Response = error match {
-    case _: TaskError.TaskNotFound    => Response.text(error.message).status(Status.NotFound)
-    case _: TaskError.ValidationError => Response.text(error.message).status(Status.BadRequest)
-  }
+  private def errorResponse(error: TaskError): ZIO[Any, Nothing, Response] = ZIO.succeed(
+    error match {
+      case _: TaskError.TaskNotFound    => Response.text(error.message).status(Status.NotFound)
+      case _: TaskError.ValidationError => Response.text(error.message).status(Status.BadRequest)
+    }
+  )
 
   def apply(service: TaskService): Routes[Any, Response] = Routes(
 
     // GET /tasks?completed=true&limit=20
     Method.GET / "tasks" ->
       handler { (req: Request) =>
-        val completedFilter = req.url.queryParams.get("completed").flatMap(_.headOption).map(_.toBooleanOption).flatten
-        val limit           = req.url.queryParams.get("limit").flatMap(_.headOption).flatMap(_.toIntOption).getOrElse(50)
+        // Query params - defensive extraction for zio-http 3.0.0-RC4
+        val completedFilter = req.url.queryParams
+          .get("completed")
+          .flatMap(_.headOption)
+          .flatMap { s => scala.util.Try(s.toString.toBoolean).toOption }
+
+        val limit = req.url.queryParams
+          .get("limit")
+          .flatMap(_.headOption)
+          .flatMap { s => scala.util.Try(s.toString.toInt).toOption }
+          .getOrElse(50)
 
         service.getAll.map { tasks =>
           val filtered = completedFilter match {
