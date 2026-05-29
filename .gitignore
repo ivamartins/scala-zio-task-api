@@ -15,3 +15,4 @@ mongo_data/
 # Environment
 .env
 *.env
+cs
