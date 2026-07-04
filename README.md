@@ -1,5 +1,8 @@
 # ZIO Task API
 
+[![CI](https://github.com/ivamartins/zio-task-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ivamartins/zio-task-api/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 > A study/portfolio base for **typed, structured concurrency** in Scala. Demonstrates idiomatic use of ZIO 2 and ZIO HTTP for production-grade backend services.
 
 Complete CRUD REST API built with **Scala 3 + ZIO 2 + ZIO HTTP** featuring two persistence options:
