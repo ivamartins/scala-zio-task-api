@@ -1,177 +1,63 @@
 # ZIO Task API
 
+> A study/portfolio base for **typed, structured concurrency** in Scala. Demonstrates idiomatic use of ZIO 2 and ZIO HTTP for production-grade backend services.
+
 Complete CRUD REST API built with **Scala 3 + ZIO 2 + ZIO HTTP** featuring two persistence options:
 
-- **In-Memory** (default) → runs immediately, no Docker needed
-- **MongoDB** (NoSQL) → real persistence using official MongoDB Scala Driver (requires Docker)
+- **In-Memory** (default) — runs immediately, no Docker needed
+- **MongoDB** (NoSQL) — real persistence using the official MongoDB Scala Driver (requires Docker)
 
 Persistence is controlled by **a single flag** in `Main.scala`.
 
-This project was created for study and portfolio purposes, with clean architecture, typed errors, and well-organized code.
+This project is part of Code Solutions' study/portfolio material: a clean, well-organized codebase that demonstrates **typed errors**, **dependency injection** (via ZLayers), and **structured concurrency** in Scala 3.
 
----
+## Why this base
 
-## Prerequisites
+- **Idiomatic Scala 3 + ZIO 2** — the modern stack for typed, structured concurrency
+- **Clean architecture** with clear separation of concerns (routes / services / repositories)
+- **Typed errors** — no exceptions leaking through layers
+- **Two persistence options** — swap with a single flag, no rewrite
 
-- Java 11 or higher (you already have it installed)
-- sbt (Scala build tool)
+## Quick start
 
-### Installing sbt with Coursier (recommended)
-
-```bash
-curl -fL https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz | gzip -d > cs
-chmod +x cs
-./cs install sbt
-```
-
-Restart your terminal and verify the installation:
+**Prerequisites:** Java 11+ and sbt.
 
 ```bash
-sbt --version
-```
+# Install sbt (if not installed)
+cs install sbt
 
----
-
-## ✅ How to Run the Project
-
-### Choosing Persistence (Important)
-
-Persistence is controlled by **a single flag** in `Main.scala`:
-
-```scala
-// ============================================
-// ESCOLHA A PERSISTÊNCIA AQUI (só mude esta linha)
-// ============================================
-private val useMongo = false   // true = MongoDB | false = In-Memory
-```
-
-- `false` (padrão) → **In-Memory** (rápido, não precisa de Docker)
-- `true` → **MongoDB** (persistência real, precisa do Docker)
-
----
-
-### 1. Running with In-Memory (Recommended for first tests)
-
-Deixe a flag como `false`:
-
-```scala
-private val useMongo = false
-```
-
-Então rode:
-
-```bash
+# Run with in-memory storage (default)
 sbt run
-```
 
-A API sobe em: **http://localhost:8080**
-
-Teste rápido:
-
-```bash
-curl http://localhost:8080/health
-```
-
----
-
-### 2. Running with MongoDB (Real Persistence)
-
-#### Passos:
-
-1. **Suba o MongoDB** (com Mongo Express):
-
-```bash
+# Or run with MongoDB (requires Docker)
 docker compose up -d
+MONGO_ENABLED=true sbt run
 ```
 
-2. **Mude a flag** no `Main.scala`:
+The app will start on `http://localhost:8080`.
 
-```scala
-private val useMongo = true
-```
+## API endpoints
 
-3. Rode a aplicação:
+- `GET    /tasks` — list all tasks
+- `POST   /tasks` — create a task
+- `GET    /tasks/:id` — get a task
+- `PUT    /tasks/:id` — update a task
+- `DELETE /tasks/:id` — delete a task
 
-```bash
-sbt run
-```
-
-4. Acesse o Mongo Express (interface web do banco):
-
-- **URL**: http://localhost:8081
-- Usuário: `admin`
-- Senha: `admin123`
-
----
-
-## Como voltar para In-Memory
-
-Basta mudar a flag de volta para `false`:
-
-```scala
-private val useMongo = false
-```
-
-Depois rode `sbt run` novamente.
-
----
-
-## Available Endpoints
-
-| Method | Route                             | Description                   |
-|--------|-----------------------------------|-------------------------------|
-| GET    | `/health`                         | Health check                  |
-| GET    | `/tasks`                          | List all tasks                |
-| GET    | `/tasks?completed=true&limit=10`  | Filter + limit                |
-| GET    | `/tasks/:id`                      | Get task by ID                |
-| POST   | `/tasks`                          | Create a new task             |
-| PUT    | `/tasks/:id`                      | Update a task                 |
-| DELETE | `/tasks/:id`                      | Delete a task                 |
-
-### curl Examples
-
-**Create task:**
-```bash
-curl -X POST http://localhost:8080/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Study ZIO + MongoDB","description":"Finish the project"}'
-```
-
-**Filter tasks:**
-```bash
-curl "http://localhost:8080/tasks?completed=false&limit=5"
-```
-
----
-
-## Run Tests
+## Run the tests
 
 ```bash
 sbt test
 ```
 
----
+> **Português?** Veja [`README.pt-BR.md`](./README.pt-BR.md).
 
-## Project Structure
+## See also
 
-```
-src/main/scala
-├── api/           → HTTP routes
-├── config/        → MongoDB configuration
-├── domain/        → Models + TaskError (typed errors)
-├── repository/    → InMemory + MongoTaskRepository
-├── service/       → Business logic
-└── Main.scala     → Entry point + persistence selection
-```
+- **Other Code Solutions bases**: [akka-scala-base](https://github.com/ivamartins/akka-scala-base), [flink-kafka-scala-base](https://github.com/ivamartins/flink-kafka-scala-base)
+- **Code Solutions**: [ivamartins.github.io/code-solutions-site](https://ivamartins.github.io/code-solutions-site/)
+- **All Code Solutions open source**: [github.com/ivamartins](https://github.com/ivamartins)
 
----
+## License
 
-## Notes
-
-- The project is configured with **In-Memory** by default for easy development.
-- The **MongoDB** implementation is ready but may require small adjustments when enabling mongo4cats integration.
-- To switch back, just follow the steps above.
-
----
-
-Good luck! When you return, the project is already organized and documented.
+MIT — see `LICENSE`.
